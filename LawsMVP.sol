@@ -89,7 +89,7 @@ contract Laws {
         onlyOwnerInFirst90Days
         onlyAuthorizedAfter90Days(_lawId)
     {
-        // Do something to "pop" the law from the map; this is missing // laws[_lawId] .....
-        emit LawDeleted(_lawId );
+        delete laws[_lawId];
+        emit LawDeleted(_lawId);
     }
 }
