@@ -35,6 +35,7 @@ contract Laws {
     constructor(address _owner) {
         owner = _owner;
         creationTimestamp = block.timestamp;
+        lawCount = 0;
     }
 
     // This modifier checks if the function is called by the owner within the first 90 days or
@@ -61,6 +62,7 @@ contract Laws {
             //how: HowContract(_howContract),
             content: _content
         });
+        lawCount += 1;
         emit LawAdded(_lawId, _content);
     }
 
@@ -79,6 +81,7 @@ contract Laws {
         onlyOwnerOrAuthorized(_lawId)
     {
         delete laws[_lawId];
+        lawCount -= 1;
         emit LawDeleted(_lawId);
     }
 }
