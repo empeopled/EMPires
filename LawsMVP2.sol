@@ -40,7 +40,8 @@ contract Laws {
 
     // This modifier checks if the function is called by the owner within the first 90 days or
     // by an authorized address after the first 90 days.
-    modifier onlyOwnerOrAuthorized(uint256 _lawId) {
+/// modifier onlyOwnerOrAuthorized(uint256 _lawId) {   // correct modifier when other contracts are present
+    modifier onlyOwnerOrAuthorized() {                   // lean modifier within present context
         if (block.timestamp < creationTimestamp + 90 days) {
             require(msg.sender == owner, "Only the owner can perform this action within the first 90 days");
         } else {
@@ -54,7 +55,8 @@ contract Laws {
     // This function adds a law. It can be called by the owner within the first 90 days, and by authorized addresses afterwards.
     function addLaw(string memory _content, address _targetContract, uint256 _lawId) 
         external 
-        onlyOwnerOrAuthorized(_lawId)
+    /// onlyOwnerOrAuthorized(_lawId)   // correct modifier when other contracts are present
+        onlyOwnerOrAuthorized()         // lean modifier within present context
     {
         laws[_lawId] = Law({
             targetContract: _targetContract,
@@ -69,7 +71,8 @@ contract Laws {
     // This function edits a law. It can be called by the owner within the first 90 days, and by authorized addresses afterwards.
     function editLaw(string memory _newContent, uint256 _lawId) 
         external 
-        onlyOwnerOrAuthorized(_lawId)
+    /// onlyOwnerOrAuthorized(_lawId)   // correct modifier when other contracts are present
+        onlyOwnerOrAuthorized()         // lean modifier within present context
     {
         laws[_lawId].content = _newContent;
         emit LawEdited(_lawId, _newContent);
@@ -78,7 +81,8 @@ contract Laws {
     // This function deletes a law. It can be called by the owner within the first 90 days, and by authorized addresses afterwards.
     function deleteLaw(uint256 _lawId) 
         external 
-        onlyOwnerOrAuthorized(_lawId)
+    /// onlyOwnerOrAuthorized(_lawId)   // correct modifier when other contracts are present
+        onlyOwnerOrAuthorized()         // lean modifier within present context
     {
         delete laws[_lawId];
         lawCount -= 1;
