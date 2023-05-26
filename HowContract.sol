@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 //This is a simplified example and does not include all the necessary checks and balances you would want in a production contract. 
-//For example, it does not prevent double voting, it doesn't implement secure vote tallying, and it doesn't handle what happens if 
+//For example, it doesn't implement secure vote tallying, and it doesn't handle what happens if 
 //the token balance of a voter changes during the voting period.
 
 
