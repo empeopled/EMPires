@@ -30,11 +30,9 @@ contract HowContract {
         require(empToken.balanceOf(msg.sender) > 0, "Only EMP token holders can open a vote");
         
         // Start the voting process and initialize the counts to zero.
-        votes[_proposalId] = Vote({
-            startTime: block.timestamp,
-            yesCount: 0,
-            noCount: 0
-        });
+        votes[_proposalId].startTime = block.timestamp;
+        votes[_proposalId].yesCount = 0;
+        votes[_proposalId].noCount = 0;
     }
 
     // The castVote function allows an address to vote on a proposal.
