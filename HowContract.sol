@@ -4,9 +4,11 @@ pragma solidity >=0.8.0 <0.9.0;
 import "./IERC20.sol";  // Import the ERC20 interface.
 
 contract HowContract {
-    IERC20 public empToken;  // The token used for weighted voting.
+    IERC20 public token;  // The token used for weighted voting.
     
     uint256 public constant VOTING_PERIOD = 7 days;  // The duration of the voting period.
+
+    event Log(string message);
 
     // The structure of a vote, containing the start time, yes count, no count, and a mapping of who has voted.
     struct Vote {
@@ -19,15 +21,18 @@ contract HowContract {
     // A mapping from proposal IDs to votes.
     mapping(uint256 => Vote) public votes;
 
-    // The constructor sets the address for the EMP token.
-    constructor(address _empToken) {
-        empToken = IERC20(_empToken);
+    // The constructor sets the address for the token.
+    //constructor(IERC20 token_) {
+    //    token = token_;
+    constructor(address tokenAddr) {
+        emit Log("How constructor!");
+        token = IERC20(tokenAddr);
     }
 
     // The openVoting function starts the voting process for a proposal.
     function openVoting(uint256 _proposalId) external {
         // Only holders of the EMP token can open a vote.
-        require(empToken.balanceOf(msg.sender) > 0, "Only EMP token holders can open a vote");
+        //require(token.balanceOf(msg.sender) > 0, "Only token holders can open a vote");
         
         // Start the voting process and initialize the counts to zero.
         votes[_proposalId].startTime = block.timestamp;
@@ -35,8 +40,8 @@ contract HowContract {
         votes[_proposalId].noCount = 0;
     }
 
-    // The castVote function allows an address to vote on a proposal.
-    function castVote(uint256 _proposalId, bool _vote) external {
+    // The castBallot function allows an address to vote on a proposal.
+    function castBallot(uint256 _proposalId, bool ballot) external {
         // Store the vote struct in memory to avoid excessive reads from storage.
         Vote storage vote = votes[_proposalId];
         
@@ -47,10 +52,10 @@ contract HowContract {
         require(!vote.hasVoted[msg.sender], "You have already voted on this proposal");
 
         // Get the number of tokens held by the voter.
-        uint256 voteWeight = empToken.balanceOf(msg.sender);
+        uint256 voteWeight = token.balanceOf(msg.sender);
 
         // Update the vote counts based on the voter's decision and their token balance.
-        if (_vote) {
+        if (ballot) {
             vote.yesCount += voteWeight;
         } else {
             vote.noCount += voteWeight;
