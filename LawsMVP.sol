@@ -3,22 +3,24 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 // Import the required interfaces. These are commented out for now, but you'll need to uncomment them once available.
-//import "./IERC20.sol";
-//import "./TokenTransferProposal.sol";
-//import "./WhoContract.sol";
-//import "./HowContract.sol";
+import "./IERC20.sol";
+import "./HowContract.sol";
 
 // The main contract: Laws.
 contract Laws {
     // Store the address of the contract's owner and the timestamp when the contract was created.
     address public owner;
     uint256 public immutable creationTimestamp;
+    // a token for this set of laws IN's thing...
+    IERC20 public empToken;
+    // VARIABLE FOR FLOW CONTROL IN ABSCENCE OF PASSING TIME
+    bool passTime;
 
     // The structure of a Law, containing the content of the law and the addresses of the 'who' and 'how' contracts.
     struct Law {
         address targetContract;
-        //WhoContract who;
-        //HowContract how;
+        address associatedContract;
+        HowContract how;
         string content;
     }
 
@@ -26,6 +28,7 @@ contract Laws {
     mapping(uint256 => Law) public laws;
     uint256 public lawCount;
 
+    event Log(string message);
     // Emit these events when laws are added, edited, or deleted.
     event LawAdded(uint256 indexed lawId, string content);
     event LawEdited(uint256 indexed lawId, string newContent);
@@ -36,32 +39,33 @@ contract Laws {
         owner = _owner;
         creationTimestamp = block.timestamp;
         lawCount = 0;
+        passTime = true;     /// FLOW CONTROL
     }
 
     // This modifier checks if the function is called by the owner within the first 90 days or
     // by an authorized address after the first 90 days.
-/// modifier onlyOwnerOrAuthorized(uint256 _lawId) {   // correct modifier when other contracts are present
-    modifier onlyOwnerOrAuthorized() {                   // lean modifier within present context
-        if (block.timestamp < creationTimestamp + 90 days) {
+    modifier onlyOwnerOrAuthorized(uint256 _lawId) {   // correct modifier when other contracts are present
+        if ((block.timestamp < creationTimestamp + 90 days) && passTime) {    // FLOW CONTROL
+            emit Log("Interaction PRIOR!");
+            passTime = false;    /// FLOW CONTROL
             require(msg.sender == owner, "Only the owner can perform this action within the first 90 days");
         } else {
-            // Uncomment these lines once the who and how contracts are available.
-            //require(laws[_lawId].who.isTokenHolder(msg.sender), "Only token holders can perform this action after 90 days");
-            //require(laws[_lawId].how.isChangeAccepted(msg.sender, _lawId), "The proposed change was not accepted");
+            emit Log("Interaction POSTERIOR!");
+            require(laws[_lawId].how.isChangeAccepted(_lawId), "The proposed change was not accepted");
         }
         _;
     }
 
     // This function adds a law. It can be called by the owner within the first 90 days, and by authorized addresses afterwards.
-    function addLaw(string memory _content, address _targetContract, uint256 _lawId) 
+    function addLaw(string memory _content, address _targetContract, address _associatedContract, uint256 _lawId) 
         external 
-    /// onlyOwnerOrAuthorized(_lawId)   // correct modifier when other contracts are present
-        onlyOwnerOrAuthorized()         // lean modifier within present context
+        onlyOwnerOrAuthorized(_lawId)   // correct modifier when other contracts are present
     {
         laws[_lawId] = Law({
             targetContract: _targetContract,
-            //who: WhoContract(_whoContract),
-            //how: HowContract(_howContract),
+            associatedContract: _associatedContract,
+            //how: new HowContract(empToken),
+            how: new HowContract(address(empToken)),
             content: _content
         });
         lawCount += 1;
@@ -71,8 +75,7 @@ contract Laws {
     // This function edits a law. It can be called by the owner within the first 90 days, and by authorized addresses afterwards.
     function editLaw(string memory _newContent, uint256 _lawId) 
         external 
-    /// onlyOwnerOrAuthorized(_lawId)   // correct modifier when other contracts are present
-        onlyOwnerOrAuthorized()         // lean modifier within present context
+        onlyOwnerOrAuthorized(_lawId)   // correct modifier when other contracts are present
     {
         laws[_lawId].content = _newContent;
         emit LawEdited(_lawId, _newContent);
@@ -81,8 +84,7 @@ contract Laws {
     // This function deletes a law. It can be called by the owner within the first 90 days, and by authorized addresses afterwards.
     function deleteLaw(uint256 _lawId) 
         external 
-    /// onlyOwnerOrAuthorized(_lawId)   // correct modifier when other contracts are present
-        onlyOwnerOrAuthorized()         // lean modifier within present context
+        onlyOwnerOrAuthorized(_lawId)   // correct modifier when other contracts are present
     {
         delete laws[_lawId];
         lawCount -= 1;
