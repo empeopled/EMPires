@@ -64,7 +64,8 @@ contract Laws {
         laws[_lawId] = Law({
             targetContract: _targetContract,
             associatedContract: _associatedContract,
-            how: new HowContract(empToken),
+            //how: new HowContract(empToken),
+            how: new HowContract(address(empToken)),
             content: _content
         });
         lawCount += 1;
