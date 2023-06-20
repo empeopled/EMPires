@@ -16,6 +16,9 @@ contract Laws {
     // VARIABLE FOR FLOW CONTROL IN ABSCENCE OF PASSING TIME
     bool passTime;
 
+    // The address of the 'how' contract
+    address public howContract;
+
     // The structure of a Law, containing the content of the law and the addresses of the 'who' and 'how' contracts.
     struct Law {
         address targetContract;
@@ -40,6 +43,14 @@ contract Laws {
         creationTimestamp = block.timestamp;
         lawCount = 0;
         passTime = true;     /// FLOW CONTROL
+        howContract = address(this);
+    }
+
+    // This function sets the 'how' contract. It can only be called by the owner, and only within the first 90 days.
+    function setHowContract(address _howContract) external {
+        require(block.timestamp < creationTimestamp + 90 days, "Can only set 'how' contract within the first 90 days");
+        require(msg.sender == owner, "Only the owner can set the 'how' contract");
+        howContract = _howContract;
     }
 
     // This modifier checks if the function is called by the owner within the first 90 days or
@@ -51,7 +62,8 @@ contract Laws {
             require(msg.sender == owner, "Only the owner can perform this action within the first 90 days");
         } else {
             emit Log("Interaction POSTERIOR!");
-            require(laws[_lawId].how.isChangeAccepted(_lawId), "The proposed change was not accepted");
+            HowContract how = HowContract(howContract);
+            require(how.isChangeAccepted(_lawId), "The proposed change was not accepted");
         }
         _;
     }
@@ -64,8 +76,7 @@ contract Laws {
         laws[_lawId] = Law({
             targetContract: _targetContract,
             associatedContract: _associatedContract,
-            //how: new HowContract(empToken),
-            how: new HowContract(address(empToken)),
+            how: HowContract(howContract),
             content: _content
         });
         lawCount += 1;
