@@ -59,6 +59,7 @@ contract Laws {
         if ((block.timestamp < creationTimestamp + 90 days) && passTime) {    // FLOW CONTROL
             emit Log("Interaction PRIOR!");
             passTime = false;    /// FLOW CONTROL
+            emit Log("(The \"passTime\" was changed to false; subsequent interactions hit the \"how\" logic.)");
             require(msg.sender == owner, "Only the owner can perform this action within the first 90 days");
         } else {
             emit Log("Interaction POSTERIOR!");
