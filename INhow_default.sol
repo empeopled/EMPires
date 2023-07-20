@@ -4,16 +4,17 @@ pragma solidity >=0.8.0 <0.9.0;
 import "./INhow_Interface.sol";
 import "./IERC20.sol";  // Import the ERC20 interface.
 
-contract DecisionContract_Default is DecisionContract { 
+contract GovernContract_Default is GovernContract { 
     address dictatorAddr;
     address allowedContractAddr;
 
     event Log(string message);
+    event LogAddress(string message, address _addr);
 
     constructor(address _dictatorAddr) {
         emit Log("DEFAULT How constructor!");
         dictatorAddr = _dictatorAddr;
-        allowedContractAddr = address(0);     // this is a purposely invalid address
+        allowedContractAddr = address(this);    // guards from changes
     }
 
     // This modifier checks for whether the sender of the transaction/interaction is the dictator
@@ -21,16 +22,22 @@ contract DecisionContract_Default is DecisionContract {
         emit Log("Modifier of OnlyAuthorized is being checked");
         require(msg.sender == dictatorAddr,
                 "Only the dictator can perofrm this action!");
+        emit Log("Passed?");
         _;
     }
 
 
     // This modifier checks for whether the dictator has allowed for this change to take place
     // It checks whether the address of the decision-making contract is what the dictator has authorized
-    modifier contractAuthorized(address newDecisionContractAddr) {
+    modifier contractAuthorized(address newGovernContractAddr) {
         emit Log("Modifier of ContractAuthorized is being checked");
-        require(newDecisionContractAddr == allowedContractAddr,
+        emit LogAddress("Dictator address:",dictatorAddr);
+        emit LogAddress("Allowed governance address:",allowedContractAddr);
+        emit LogAddress("Attempted governance address:",newGovernContractAddr);
+        emit LogAddress("THIS decision address:",address(this));
+        require(newGovernContractAddr == allowedContractAddr,
                  "Only a specific contract can be used as replacement!");
+        emit Log("Passed?");
         _;
     }
 
@@ -39,9 +46,9 @@ contract DecisionContract_Default is DecisionContract {
     // decision-making process contract to replace the existing one in the caller is met
     function changeDecisionProcess(address newDecisonContractAddr) external
      contractAuthorized(newDecisonContractAddr) returns (bool) {
-         // we reset the address of candidate contracts in case we are given back control as dictator...
-         // ...so that nobody can inject their own governance during that potential transition!
-         allowedContractAddr = address(0);
+        emit Log("Change will be allowed.?");
+        // we do not reset the address of candidate contract...
+        // ...as the only change possible is to return to this contract!!
         return true;
     }
 

@@ -10,7 +10,7 @@ contract Laws {
     uint256 public immutable creationTimestamp;
 
     // The address of the 'how' contract (logic for decision making)
-    address public decideContractAddr;
+    address public governContractAddr;
 
     // VARIABLE FOR FLOW CONTROL IN ABSCENCE OF PASSING TIME. DEBUGGING ONLY!
     bool passTime1;
@@ -35,32 +35,32 @@ contract Laws {
         lawCount = 0;
         passTime1 = true;     /// FLOW CONTROL; DEBUGGING ONLY!
         passTime2 = true;     /// FLOW CONTROL; DEBUGGING ONLY!
-        decideContractAddr = address(0);      // the initial address needs to be universally invalid
+        governContractAddr = address(0);      // the initial address needs to be universally invalid
         DecisionContract_Default firstHow = new DecisionContract_Default(founderAddr);
-        decideContractAddr = address(firstHow);
+        governContractAddr = address(firstHow);
     }
 
     // This function sets the 'decision making' contract.
-    function setDecisionContract(address _howContractAddr) external
-    onlyAuthorized()  {
-        decideContractAddr = _howContractAddr;
+    function setDecisionContract(address _newGovernContractAddr) external
+    changeDecisionAuthorized(_newGovernContractAddr)  {
+        governContractAddr = _newGovernContractAddr;
     }
 
     // This modifier checks for conditions...
-    modifier onlyAuthorized() {
+    modifier changeDecisionAuthorized(address _newGovernContractAddr) {
         if ((block.timestamp < creationTimestamp + 90 days) && passTime1) {    // FLOW CONTROL; DEBUGGING ONLY!
             emit Log("Interaction PRIOR!");
             passTime1 = false;    /// FLOW CONTROL; MIMICS PASSING OF the 90 DAYS DEBUGGING ONLY!
             require(msg.sender == founderAddr, "Only the founder can perform this action within the first 90 days");
         } else {
             emit Log("Interaction POSTERIOR!");
-            DecisionContract how = DecisionContract(decideContractAddr);    // creates local instance from reference to existing
+            DecisionContract how = DecisionContract(governContractAddr);    // creates local instance from reference to existing
             if( passTime2 ) {
                 emit Log("Passing time for the second and last time! PRIOR 2");
                 passTime2 = false;    /// FLOW CONTROL; MIMICS PASSING OF the 90 DAYS DEBUGGING ONLY!
             } else {
                 emit Log("Interaction POSTERIOR 2");
-                require(how.changeDecisionProcess(decideContractAddr),"HowContract returned FALSE" );
+                require(how.changeDecisionProcess(_newGovernContractAddr),"HowContract returned FALSE" );
             }
         }
         _;
