@@ -4,7 +4,7 @@ pragma solidity >=0.8.0 <0.9.0;
 import "./INhow_Interface.sol";
 import "./IERC20.sol";  // Import the ERC20 interface.
 
-contract DecisionContract_Default is DecisionContract { 
+contract GovernContract_Default is GovernContract { 
     address dictatorAddr;
     address allowedContractAddr;
 
@@ -29,13 +29,13 @@ contract DecisionContract_Default is DecisionContract {
 
     // This modifier checks for whether the dictator has allowed for this change to take place
     // It checks whether the address of the decision-making contract is what the dictator has authorized
-    modifier contractAuthorized(address newDecisionContractAddr) {
+    modifier contractAuthorized(address newGovernContractAddr) {
         emit Log("Modifier of ContractAuthorized is being checked");
         emit LogAddress("Dictator address:",dictatorAddr);
-        emit LogAddress("Allowed decision address:",allowedContractAddr);
-        emit LogAddress("Attempted decision address:",newDecisionContractAddr);
+        emit LogAddress("Allowed governance address:",allowedContractAddr);
+        emit LogAddress("Attempted governance address:",newGovernContractAddr);
         emit LogAddress("THIS decision address:",address(this));
-        require(newDecisionContractAddr == allowedContractAddr,
+        require(newGovernContractAddr == allowedContractAddr,
                  "Only a specific contract can be used as replacement!");
         emit Log("Passed?");
         _;

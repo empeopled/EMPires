@@ -3,7 +3,7 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "./IERC20.sol";  // Import the ERC20 interface.
 
-interface DecisionContract { 
+interface GovernContract { 
     // a function that can contain "emit LOG("");" to help with EVM testing
     function simplePing() external;
 

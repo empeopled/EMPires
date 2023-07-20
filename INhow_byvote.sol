@@ -4,7 +4,7 @@ pragma solidity >=0.8.0 <0.9.0;
 import "./INhow_Interface.sol";
 import "./IERC20.sol";  // Import the ERC20 interface.
 
-contract DecisionContract_ByVote is DecisionContract { 
+contract GovernContract_ByVote is GovernContract { 
     uint256 public constant VOTING_PERIOD = 7 days;  // The duration of the voting period.
     // the "public" modified automatically generates a getter funtion
 
