@@ -63,6 +63,12 @@ contract GovernContract_Default is GovernContract {
         allowedContractAddr = newDecisonContractAddr;
     }
 
+    function notifyOfProposedLaw(address associatedLawContract) external returns (bool) {
+        emit LogAddress("The dictatorship was notified of a proposed law", associatedLawContract);
+        // Always "accept" any proposed laws, even though dicators seldom regard opinions...
+        return true;
+    }
+
 //--- these functions are for DEBUGGING
     // a function to interact with the contract to make sure it is there...
     function simplePing() external {
