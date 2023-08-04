@@ -9,6 +9,7 @@ contract GovernContract_ByVote is GovernContract {
     // the "public" modified automatically generates a getter funtion
 
     event Log(string message);
+    event LogAddress(string message, address _addr);
 
     // The structure of a vote, containing the start time, yes count, no count, and a mapping of who has voted.
     struct Vote {
@@ -18,8 +19,8 @@ contract GovernContract_ByVote is GovernContract {
         mapping(address => bool) hasVoted;
     }
 
-    // A mapping from proposal IDs to votes.
-    mapping(uint256 => Vote) public votes;
+    // A mapping from proposed law contract to a vote structure.
+    mapping(address => Vote) public votes;
 
     constructor() {
         emit Log("BYVOTE How constructor!");
@@ -30,19 +31,25 @@ contract GovernContract_ByVote is GovernContract {
         return false;
     }
 
+    function notifyOfProposedLaw(address associatedLawContract) external returns (bool) {
+        emit LogAddress("The contract was notified of a proposed law", associatedLawContract);
+        // Always "reject" for now
+        return false;
+    }
+
 // ---- Functions that will be used for voting
     // The openVoting function starts the voting process for a proposal.
-    function openVoting(uint256 _proposalId) external {     
+    function openVoting(address proposedLawContract) external {     
         // Start the voting process and initialize the counts to zero.
-        votes[_proposalId].startTime = block.timestamp;
-        votes[_proposalId].yesCount = 0;
-        votes[_proposalId].noCount = 0;
+        votes[proposedLawContract].startTime = block.timestamp;
+        votes[proposedLawContract].yesCount = 0;
+        votes[proposedLawContract].noCount = 0;
     }
 
     // The castBallot function allows an address to vote on a proposal.
-    function castBallot(uint256 _proposalId, bool ballot) external {
+    function castBallot(address _proposedLawContract, bool ballot) external {
         // Store the vote struct in memory to avoid excessive reads from storage.
-        Vote storage vote = votes[_proposalId];
+        Vote storage vote = votes[_proposedLawContract];
         
         // Ensure the voting period is still ongoing.
         require(block.timestamp < vote.startTime + VOTING_PERIOD, "Voting period has ended");

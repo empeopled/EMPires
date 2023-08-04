@@ -10,6 +10,9 @@ interface GovernContract {
     // a function that can contain "emit LOG("");" to help with EVM testing
     function changeDecisionProcess(address newDecisonContractAddr) external returns (bool);
 
+    // a function to notify this governance contract that a law has been proposed
+    // (It is meant to return "true" if everything went well; things can go wrong, like proposing a law twice.)
+    function notifyOfProposedLaw(address associatedLawContract) external returns (bool);
 
     // a function that is meant to return "true" used for debugging
     // This function is useful for testing when using a "require()" inside another smart contract.
@@ -24,8 +27,4 @@ interface GovernContract {
     // a "false" to be returned for testing failure of the condition.
     function returnTrue() external returns (bool) ;
 
-//----- random ideas
-    // Functions that can exist in an concrete implementation of the contract that  resemble a democracy
-    //function openVoting(uint256 _proposalId) external;
-    //function castBallot(uint256 _proposalId, bool ballot) external;
 }

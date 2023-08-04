@@ -18,12 +18,14 @@ contract Laws {
 
     // The structure of a Law, containing the content of the law and the addresses of the 'who' and 'how' contracts.
     struct Law {
-        //address associatedContract;    // Any on-chain logic related to this law will point to its contrac(s)
+        address associatedContract;    // Any on-chain logic related to this law will point to its contrac(s)
+        address author;                // (Optional) Wallet address of person who proposes the law
         string content;
+        uint16 status;                 // specifies: proposed, approved
     }
 
     // Store all laws in a mapping, indexed by a unique identifier, and keep a count of the total number of laws.
-    mapping(uint256 => Law) public laws;
+    mapping(address => Law) public laws;
     uint256 public lawCount;
 
     event Log(string message);
@@ -66,4 +68,25 @@ contract Laws {
         _;
     }
 
+    // This function addes a law structure to the contract
+    function proposeLaw(string memory _content, address _associatedContract)  external
+    checkProposedLaw(_associatedContract)
+    {
+        laws[_associatedContract] = Law({
+            associatedContract: _associatedContract,
+            author: msg.sender,
+            content: _content,
+            status: 1     // set to non-zero such that a check can be made for existance in the mapping
+        });
+        lawCount += 1;
+    }
+
+    // This modifier checks for conditions...
+    modifier checkProposedLaw(address _associatedContract) {
+        emit Log("Modifier checking for proposed law conditions.");
+        require(laws[_associatedContract].status == 0,"This law contract is already in the map!");
+        GovernContract how = GovernContract(governContractAddr);    // creates local instance from reference to existing
+        require(how.notifyOfProposedLaw(_associatedContract),"HowContract returned FALSE. Rejects law proposal." );
+        _;
+    }
 }
