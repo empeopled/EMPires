@@ -63,10 +63,20 @@ contract GovernContract_Default is GovernContract {
         allowedContractAddr = newDecisonContractAddr;
     }
 
+    // a function that is asked to accept a law as having been proposed
     function notifyOfProposedLaw(address associatedLawContract) external returns (bool) {
         emit LogAddress("The dictatorship was notified of a proposed law", associatedLawContract);
         // Always "accept" any proposed laws, even though dicators seldom regard opinions...
         return true;
+    }
+
+    // a function that is asked to specify if a law is to be approved
+    // (The incoming law contract address can be used to check for the _specific_ law to be approved.)
+    function notifyOfApprovingLaw(address associatedLawContract) external returns (bool) {
+        emit LogAddress("The dictatorship was notified to approve a law", associatedLawContract);
+        // Only accept if the approver is the dictator, regardless of what contract this is
+        if(msg.sender == dictatorAddr) return true;
+        return false;
     }
 
 //--- these functions are for DEBUGGING
