@@ -31,9 +31,17 @@ contract GovernContract_ByVote is GovernContract {
         return false;
     }
 
+    // a function that is asked to accept a law as having been proposed
     function notifyOfProposedLaw(address associatedLawContract) external returns (bool) {
         emit LogAddress("The contract was notified of a proposed law", associatedLawContract);
         // Always "reject" for now
+        return false;
+    }
+
+    // a function that is asked to specify if a law is to be approved
+    // (The incoming law contract address can be used to check for the _specific_ law to be approved.)
+    function notifyOfApprovingLaw(address associatedLawContract) external returns (bool) {
+        emit LogAddress("The contract was notified to approve a law", associatedLawContract);
         return false;
     }
 

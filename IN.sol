@@ -81,7 +81,9 @@ contract Laws {
         lawCount += 1;
     }
 
-    // This modifier checks for conditions...
+    // This modifier checks for conditions:
+    // 1. law struct has to not already be includes
+    // 2. the governance contract does not reject this type of law (for reasons unknown)
     modifier checkProposedLaw(address _associatedContract) {
         emit Log("Modifier checking for proposed law conditions.");
         require(laws[_associatedContract].status == 0,"This law contract is already in the map!");
@@ -89,4 +91,23 @@ contract Laws {
         require(how.notifyOfProposedLaw(_associatedContract),"HowContract returned FALSE. Rejects law proposal." );
         _;
     }
+
+    // This function certifies a previously added law structure to be accepted as a law
+    function addLaw(address _associatedContract)  external
+    checkAddingLaw(_associatedContract)
+    {
+        laws[_associatedContract].status = 2;
+    }
+
+    // This modifier checks for conditions:
+    // 1. the law this struct represents has to have been proposed first
+    // 2. the governance contract has to approve the _specific_ law
+    modifier checkAddingLaw(address _associatedContract) {
+        emit Log("Modifier checking for proposed law conditions.");
+        require(laws[_associatedContract].status == 1,"This law contract is not a proposed law!");
+        GovernContract how = GovernContract(governContractAddr);    // creates local instance from reference to existing
+        require(how.notifyOfApprovingLaw(_associatedContract),"HowContract returned FALSE. Rejects law addition." );
+        _;
+    }
+
 }
