@@ -45,6 +45,20 @@ contract GovernContract_ByVote is GovernContract {
         return false;
     }
 
+    // a function that is asked to accept a law as having been proposed
+    function notifyOfProposedLawRemoval(address associatedLawContract, address motionerAddr) external returns (bool) {
+        emit LogAddress("The contract was notified of a prposal to remove alaw", associatedLawContract);
+        // Always "reject" for now
+        return false;
+    }
+
+    // a function that is asked to specify if a law is to be approved
+    // (The incoming law contract address can be used to check for the _specific_ law to be approved.)
+    function notifyOfApprovingLawRemoval(address associatedLawContract, address motionerAddr) external returns (bool) {
+        emit LogAddress("The contract was notified to approve a law", associatedLawContract);
+        return false;
+    }
+
 // ---- Functions that will be used for voting
     // The openVoting function starts the voting process for a proposal.
     function openVoting(address proposedLawContract) external {     

@@ -20,6 +20,16 @@ interface GovernContract {
     // this means, and also who is performing this interaction/transaction.)
     function notifyOfApprovingLaw(address associatedLawContract, address motionerAddr) external returns (bool);
 
+    // a function to notify this governance contract of a proposal to remove an existing law
+    // (It is meant to return "true" if everything went well; things can go wrong, like a law not existing
+    function notifyOfProposedLawRemoval(address associatedLawContract, address motionerAddr) external returns (bool);
+
+    // a function to notify this governance contract to dictate if the removal of an existing law is approved
+    // (It is meant to return "true" if this _specific_ law is approved for removal and "false" if not. The key factor
+    // here is the specificity of the contract to be removed; the governance contract can keep track of what
+    // this means, and also who is performing this interaction/transaction.)
+    function notifyOfApprovingLawRemoval(address associatedLawContract, address motionerAddr) external returns (bool);
+
     // a function that is meant to return "true" used for debugging
     // This function is useful for testing when using a "require()" inside another smart contract.
     // For example, suppose contract "ProcessContract" uses this "HowContract" to determine the

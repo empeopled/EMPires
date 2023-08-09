@@ -86,6 +86,29 @@ contract GovernContract_Default is GovernContract {
         return false;
     }
 
+    // a function that is asked to accept the removal of an existing law
+    function notifyOfProposedLawRemoval(address associatedLawContract, address motionerAddr) external returns (bool) {
+        emit LogAddress("The dictatorship was notified of a proposal to remove a law", associatedLawContract);
+        emit LogAddress("Motion made by address:", motionerAddr);
+        // Always "accept" any proposed law removals, even though dicators seldom regard opinions...
+        return true;
+    }
+
+    // a function that is asked to specify if removal of a specific law is to be approved
+    // (The incoming law contract address can be used to check for the _specific_ law to be removed.)
+    function notifyOfApprovingLawRemoval(address associatedLawContract, address motionerAddr) external returns (bool) {
+        emit LogAddress("The dictatorship was notified to remove a law", associatedLawContract);
+        emit LogAddress("Motion made by address:", motionerAddr);
+        // Only accept if the approver is the dictator, regardless of what contract this is
+        if(motionerAddr == dictatorAddr) {
+            emit LogAddress("Motioner is the dictator. Sender:", motionerAddr);
+            return true;
+        } else {
+            emit LogAddress("Motioner is NOT the dictator. Sender:", motionerAddr);
+        }
+        return false;
+    }
+
 //--- these functions are for DEBUGGING
     // a function to interact with the contract to make sure it is there...
     function simplePing() external {
