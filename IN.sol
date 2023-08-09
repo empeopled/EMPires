@@ -62,7 +62,7 @@ contract Laws {
                 passTime2 = false;    /// FLOW CONTROL; MIMICS PASSING OF the 90 DAYS DEBUGGING ONLY!
             } else {
                 emit Log("Interaction POSTERIOR 2");
-                require(how.changeDecisionProcess(_newGovernContractAddr),"HowContract returned FALSE" );
+                require(how.changeDecisionProcess(_newGovernContractAddr, msg.sender),"HowContract returned FALSE" );
             }
         }
         _;
@@ -88,7 +88,7 @@ contract Laws {
         emit Log("Modifier checking for proposed law conditions.");
         require(laws[_associatedContract].status == 0,"This law contract is already in the map!");
         GovernContract how = GovernContract(governContractAddr);    // creates local instance from reference to existing
-        require(how.notifyOfProposedLaw(_associatedContract),"HowContract returned FALSE. Rejects law proposal." );
+        require(how.notifyOfProposedLaw(_associatedContract, msg.sender),"HowContract returned FALSE. Rejects law proposal." );
         _;
     }
 
@@ -106,7 +106,7 @@ contract Laws {
         emit Log("Modifier checking for proposed law conditions.");
         require(laws[_associatedContract].status == 1,"This law contract is not a proposed law!");
         GovernContract how = GovernContract(governContractAddr);    // creates local instance from reference to existing
-        require(how.notifyOfApprovingLaw(_associatedContract),"HowContract returned FALSE. Rejects law addition." );
+        require(how.notifyOfApprovingLaw(_associatedContract, msg.sender),"HowContract returned FALSE. Rejects law addition." );
         _;
     }
 
