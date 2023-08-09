@@ -62,7 +62,7 @@ contract Laws {
                 passTime2 = false;    /// FLOW CONTROL; MIMICS PASSING OF the 90 DAYS DEBUGGING ONLY!
             } else {
                 emit Log("Interaction POSTERIOR 2");
-                require(how.changeDecisionProcess(_newGovernContractAddr),"HowContract returned FALSE" );
+                require(how.changeDecisionProcess(_newGovernContractAddr, msg.sender),"HowContract returned FALSE" );
             }
         }
         _;
@@ -88,7 +88,7 @@ contract Laws {
         emit Log("Modifier checking for proposed law conditions.");
         require(laws[_associatedContract].status == 0,"This law contract is already in the map!");
         GovernContract how = GovernContract(governContractAddr);    // creates local instance from reference to existing
-        require(how.notifyOfProposedLaw(_associatedContract),"HowContract returned FALSE. Rejects law proposal." );
+        require(how.notifyOfProposedLaw(_associatedContract, msg.sender),"HowContract returned FALSE. Rejects law proposal." );
         _;
     }
 
@@ -103,10 +103,47 @@ contract Laws {
     // 1. the law this struct represents has to have been proposed first
     // 2. the governance contract has to approve the _specific_ law
     modifier checkAddingLaw(address _associatedContract) {
-        emit Log("Modifier checking for proposed law conditions.");
+        emit Log("Modifier checking for law adding conditions.");
         require(laws[_associatedContract].status == 1,"This law contract is not a proposed law!");
         GovernContract how = GovernContract(governContractAddr);    // creates local instance from reference to existing
-        require(how.notifyOfApprovingLaw(_associatedContract),"HowContract returned FALSE. Rejects law addition." );
+        require(how.notifyOfApprovingLaw(_associatedContract, msg.sender),"HowContract returned FALSE. Rejects law addition." );
+        _;
+    }
+
+    // This function addes a law structure to the contract
+    function proposeLawRemoval(address _associatedContract)  external
+    checkProposedLawRemoval(_associatedContract)
+    {
+        // nothing ot be done
+    }
+
+    // This modifier checks for conditions:
+    // 1. the law this struct represents has to have been instated first
+    // 2. the governance contract has to approve removal of the _specific_ law
+    modifier checkProposedLawRemoval(address _associatedContract) {
+        emit Log("Modifier checking for proposed law-removal conditions.");
+        require(laws[_associatedContract].status == 2,"This law contract is not an existing law!");
+        GovernContract how = GovernContract(governContractAddr);    // creates local instance from reference to existing
+        require(how.notifyOfProposedLawRemoval(_associatedContract, msg.sender),"HowContract returned FALSE. Rejects removal prposal." );
+        _;
+    }
+
+    // This function certifies the removal of a previously added law; law is flagged as inactive
+    function removeLaw(address _associatedContract)  external
+    checkRemovingLaw(_associatedContract)
+    {
+        laws[_associatedContract].status = 3;
+        lawCount -= 1;
+    }
+
+    // This modifier checks for conditions:
+    // 1. the law this struct represents has to have been instated first
+    // 2. the governance contract has to approve removing the _specific_ law
+    modifier checkRemovingLaw(address _associatedContract) {
+        emit Log("Modifier checking for law removing conditions.");
+        require(laws[_associatedContract].status == 2,"This law contract is not an existing law!");
+        GovernContract how = GovernContract(governContractAddr);    // creates local instance from reference to existing
+        require(how.notifyOfApprovingLawRemoval(_associatedContract, msg.sender),"HowContract returned FALSE. Rejects law addition." );
         _;
     }
 

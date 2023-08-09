@@ -27,12 +27,12 @@ contract GovernContract_ByVote is GovernContract {
     }
 
 
-    function changeDecisionProcess(address newDecisonContractAddr) external returns (bool) {
+    function changeDecisionProcess(address newDecisonContractAddr, address motionerAddr) external returns (bool) {
         return false;
     }
 
     // a function that is asked to accept a law as having been proposed
-    function notifyOfProposedLaw(address associatedLawContract) external returns (bool) {
+    function notifyOfProposedLaw(address associatedLawContract, address motionerAddr) external returns (bool) {
         emit LogAddress("The contract was notified of a proposed law", associatedLawContract);
         // Always "reject" for now
         return false;
@@ -40,7 +40,21 @@ contract GovernContract_ByVote is GovernContract {
 
     // a function that is asked to specify if a law is to be approved
     // (The incoming law contract address can be used to check for the _specific_ law to be approved.)
-    function notifyOfApprovingLaw(address associatedLawContract) external returns (bool) {
+    function notifyOfApprovingLaw(address associatedLawContract, address motionerAddr) external returns (bool) {
+        emit LogAddress("The contract was notified to approve a law", associatedLawContract);
+        return false;
+    }
+
+    // a function that is asked to accept a law as having been proposed
+    function notifyOfProposedLawRemoval(address associatedLawContract, address motionerAddr) external returns (bool) {
+        emit LogAddress("The contract was notified of a prposal to remove alaw", associatedLawContract);
+        // Always "reject" for now
+        return false;
+    }
+
+    // a function that is asked to specify if a law is to be approved
+    // (The incoming law contract address can be used to check for the _specific_ law to be approved.)
+    function notifyOfApprovingLawRemoval(address associatedLawContract, address motionerAddr) external returns (bool) {
         emit LogAddress("The contract was notified to approve a law", associatedLawContract);
         return false;
     }
