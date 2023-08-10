@@ -2,8 +2,8 @@
 pragma solidity >=0.8.0 <0.9.0;       // Specify the Solidity version.
 
 import "./IERC20.sol";
-import "./INhow_Interface.sol";
-import "./INhow_default.sol";
+import "./EMPgov_interface.sol";
+import "./EMPgov_default.sol";
 
 contract Laws {
     address public founderAddr;     // Literally for historical reasons!
