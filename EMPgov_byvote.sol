@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 
-import "./INhow_Interface.sol";
+import "./EMPgov_interface.sol";
 import "./IERC20.sol";  // Import the ERC20 interface.
 
 contract GovernContract_ByVote is GovernContract { 
