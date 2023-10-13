@@ -43,14 +43,8 @@ contract Laws {
 
     // This modifier checks for conditions...
     modifier changeGovernAuthorized(address _newGovernContractAddr) {
-        if ((block.timestamp < creationTimestamp + 7 days)) {
-            emit Log("Interaction during the founding era!");
-            require(msg.sender == founderAddr, "Only the founder can perform this action within the first 90 days");
-        } else {
-            emit Log("Interaction in maturity era!");
-            GovernContract gov = GovernContract(governContractAddr);    // creates local instance from reference to existing
-            require(gov.changeDecisionProcess(_newGovernContractAddr, msg.sender),"HowContract returned FALSE" );
-        }
+        GovernContract gov = GovernContract(governContractAddr);    // creates local instance from reference to existing
+        require(gov.changeDecisionProcess(_newGovernContractAddr, msg.sender),"HowContract returned FALSE" );
         _;
     }
 
