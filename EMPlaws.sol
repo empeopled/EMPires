@@ -9,11 +9,8 @@ contract Laws {
     address public founderAddr;     // Literally for historical reasons!
     uint256 public immutable creationTimestamp;
 
-    // The address of the 'how' contract (logic for decision making)
+    // The address of the governance ontract (logic for decision making)
     address public governContractAddr;
-
-    // VARIABLE FOR FLOW CONTROL IN ABSCENCE OF PASSING TIME. DEBUGGING ONLY!
-    bool passTime;
 
     // The structure of a Law, containing the content of the law and the addresses of the 'who' and 'how' contracts.
     struct Law {
@@ -33,11 +30,9 @@ contract Laws {
     constructor(address _founderAddress) {
         founderAddr = _founderAddress;
         creationTimestamp = block.timestamp;
-        passTime = false;
         lawCount = 0;
-        governContractAddr = address(0);      // the initial address needs to be universally invalid
-        GovernContract_Default firstHow = new GovernContract_Default(founderAddr);
-        governContractAddr = address(firstHow);
+        GovernContract_Default firstGov = new GovernContract_Default(founderAddr);
+        governContractAddr = address(firstGov);
     }
 
     // This function sets the 'decision making' contract.
@@ -48,18 +43,18 @@ contract Laws {
 
     // This modifier checks for conditions...
     modifier changeGovernAuthorized(address _newGovernContractAddr) {
-        if ((block.timestamp < creationTimestamp + 90 days) && passTime) {    // FLOW CONTROL; DEBUGGING ONLY!
+        if ((block.timestamp < creationTimestamp + 7 days)) {
             emit Log("Interaction during the founding era!");
             require(msg.sender == founderAddr, "Only the founder can perform this action within the first 90 days");
         } else {
             emit Log("Interaction in maturity era!");
-            GovernContract how = GovernContract(governContractAddr);    // creates local instance from reference to existing
-            require(how.changeDecisionProcess(_newGovernContractAddr, msg.sender),"HowContract returned FALSE" );
+            GovernContract gov = GovernContract(governContractAddr);    // creates local instance from reference to existing
+            require(gov.changeDecisionProcess(_newGovernContractAddr, msg.sender),"HowContract returned FALSE" );
         }
         _;
     }
 
-    // This function addes a law structure to the contract
+    // This function adds a law structure to the contract's storage map
     function proposeLaw(string memory _content, address _associatedContract)  external
     checkProposedLaw(_associatedContract)
     {
@@ -73,13 +68,13 @@ contract Laws {
     }
 
     // This modifier checks for conditions:
-    // 1. law struct has to not already be includes
+    // 1. law struct has to not already be included
     // 2. the governance contract does not reject this type of law (for reasons unknown)
     modifier checkProposedLaw(address _associatedContract) {
         emit Log("Modifier checking for proposed law conditions.");
         require(laws[_associatedContract].status == 0,"This law contract is already in the map!");
-        GovernContract how = GovernContract(governContractAddr);    // creates local instance from reference to existing
-        require(how.notifyOfProposedLaw(_associatedContract, msg.sender),"HowContract returned FALSE. Rejects law proposal." );
+        GovernContract gov = GovernContract(governContractAddr);    // creates local instance from reference to existing
+        require(gov.notifyOfProposedLaw(_associatedContract, msg.sender),"HowContract returned FALSE. Rejects law proposal." );
         _;
     }
 
@@ -96,12 +91,12 @@ contract Laws {
     modifier checkAddingLaw(address _associatedContract) {
         emit Log("Modifier checking for law adding conditions.");
         require(laws[_associatedContract].status == 1,"This law contract is not a proposed law!");
-        GovernContract how = GovernContract(governContractAddr);    // creates local instance from reference to existing
-        require(how.notifyOfApprovingLaw(_associatedContract, msg.sender),"HowContract returned FALSE. Rejects law addition." );
+        GovernContract gov = GovernContract(governContractAddr);    // creates local instance from reference to existing
+        require(gov.notifyOfApprovingLaw(_associatedContract, msg.sender),"HowContract returned FALSE. Rejects law addition." );
         _;
     }
 
-    // This function addes a law structure to the contract
+    // This function is meant to propose that a law is removed
     function proposeLawRemoval(address _associatedContract)  external
     checkProposedLawRemoval(_associatedContract)
     {
@@ -114,8 +109,8 @@ contract Laws {
     modifier checkProposedLawRemoval(address _associatedContract) {
         emit Log("Modifier checking for proposed law-removal conditions.");
         require(laws[_associatedContract].status == 2,"This law contract is not an existing law!");
-        GovernContract how = GovernContract(governContractAddr);    // creates local instance from reference to existing
-        require(how.notifyOfProposedLawRemoval(_associatedContract, msg.sender),"HowContract returned FALSE. Rejects removal prposal." );
+        GovernContract gov = GovernContract(governContractAddr);    // creates local instance from reference to existing
+        require(gov.notifyOfProposedLawRemoval(_associatedContract, msg.sender),"HowContract returned FALSE. Rejects removal prposal." );
         _;
     }
 
@@ -133,8 +128,8 @@ contract Laws {
     modifier checkRemovingLaw(address _associatedContract) {
         emit Log("Modifier checking for law removing conditions.");
         require(laws[_associatedContract].status == 2,"This law contract is not an existing law!");
-        GovernContract how = GovernContract(governContractAddr);    // creates local instance from reference to existing
-        require(how.notifyOfApprovingLawRemoval(_associatedContract, msg.sender),"HowContract returned FALSE. Rejects law addition." );
+        GovernContract gov = GovernContract(governContractAddr);    // creates local instance from reference to existing
+        require(gov.notifyOfApprovingLawRemoval(_associatedContract, msg.sender),"HowContract returned FALSE. Rejects law addition." );
         _;
     }
 
