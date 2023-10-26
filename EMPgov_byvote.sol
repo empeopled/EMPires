@@ -90,16 +90,4 @@ contract GovernContract_ByVote is GovernContract {
         vote.hasVoted[msg.sender] = true;
     }
 
-//--- these functions are for DEBUGGING
-    // a function to interact with the contract to make sure it is there...
-    function simplePing() external {
-        emit Log("Pong from HowContract_Default!");
-    }
-
-    // a function that always returns "true" to be used for "require()" calls debugging
-    function returnTrue() external returns (bool) {
-        emit Log("Returning TRUE from HowContract_Default!");
-        return true;
-        //return false;    // uncomment this to demonstrate "require()" failing!
-    }
 }
