@@ -1,4 +1,4 @@
-empeopled was first founded in 2012 and was, to our knowledge, one of the first if not the first DAO prototypes that lent BTC for yield in a communal treasury with communal governance (albeit on a centralized infrastructures, since that's all there was at the time). 
+empeopled was first founded in 2012 and was one of the first (if not the first) DAO prototypes that lent BTC for yield in a communal treasury with communal governance (albeit on a centralized infrastructures, since that's all there was at the time). 
 
 It was a bit too far ahead of its time and failed :)
 
@@ -18,9 +18,10 @@ Additionally, this introduces modularity whereby each of these smart contracts c
 
 This bare minimalist foundation is intentional such that there is no reliance upstream to the framework. You build what you want with whom you want and there's nothing anyone else can do to mess it up for you (as a community). 
 
-Good luck. 
+Good luck! 
 
-Learn more on our YouTube: https://www.youtube.com/channel/UCGk3c66Ir4VQst6Zl8_dMFw/null
+Learn more on our YouTube: https://youtube.com/@empeopled3600?si=-TvhQ_Zn1AGvfAlg
 
 Join us on Discord: discord.gg/wQkS6m7bEd
 
+Follow us on Twitter: https://twitter.com/empeopled
