@@ -1,4 +1,4 @@
-empeopled was first founded in 2012 and was, to our knowledge, the first DAO prototypes that lent BTC for yield in a communal treasury with communal governance (albeit on a centralized infrastructures, since that's all there was at the time). 
+empeopled was first founded in 2012 and was, to our knowledge, one of the first if not the first DAO prototypes that lent BTC for yield in a communal treasury with communal governance (albeit on a centralized infrastructures, since that's all there was at the time). 
 
 It was a bit too far ahead of its time and failed :)
 
